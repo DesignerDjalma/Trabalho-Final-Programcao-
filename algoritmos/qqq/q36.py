@@ -1,0 +1,622 @@
+import datetime
+import getpass
+import math
+import os
+import subprocess
+import time
+
+# Rodando pelo CMD não haverá emojis.
+# Rodando o código pelo VSCode o mesmo terá emojis
+# É necessário fechar todos os CMDs para rodar com emojis
+
+
+# Funções Uteis
+
+
+msg_ajuda = [
+"Para usar o aplicativo basta escolher o número ao lado esquerdo",
+"da opção desejada, digitá-lo e em seguida apertar a tecla Enter.",
+"Novos menus aparecerão e então você poderá acessar novas opções.",
+" ",
+"Caso uma opção inexistente no menu seja fornecida ao programa o",
+"mesmo irá mostrar uma mensagem e então retornará ao menu inicial.",
+" ",
+"Em todos os menus a tecla 0 funciona como opção de voltar/saída.",
+]
+
+
+def limpar():
+    os.system('cls')
+
+def linhasBase(_=100):
+    simb = '-='
+    print('\n'+simb*(math.ceil(_/len(simb)))+'\n')
+
+def dataAtual(formato="%d/%m/%Y as %H:%M:%S"):
+    return datetime.datetime.now().strftime(formato)
+
+def listarTodasAsCargas():
+    variaveis = list(globals().items())
+    contador = 0
+    for (var, classe) in variaveis:
+        if isinstance(classe, Carga):
+            print(f"Carga [{var}]")
+            print(f"\n\tDetalhes:")
+            print(f"{classe.listarAtributos()}")
+    if contador == 0:
+        print("\nNão há nenhum Caminhão na Frota no momento.\n")
+
+def listarTodaosOsCaminhões():
+    variaveis = list(globals().items())
+    contador = 0
+    for (var, classe) in variaveis:
+        if isinstance(classe, Caminhão):
+            contador += 1
+            print(f"\nCaminhão [{var}]")
+            print(f"\n\tDetalhes:")
+            print(f"{classe.listarAtributos()}")
+    if contador == 0:
+        print("\nNão há nenhum Caminhão na Frota no momento.\n")
+
+
+
+# Classes
+
+
+
+class Empresa:
+    nome = "MilRodas™"
+
+
+
+class Frota:
+    caminhoes = []
+    cargas = []
+
+    def novoCaminhao(self):
+        novo_caminhao = Caminhão()
+        self.caminhoes.append(novo_caminhao)
+
+    def novaCarga(self):
+        nova_carga = Carga()
+        self.cargas.append(nova_carga)
+
+    def modificarCaminhao(self, caminhao, modo):
+        if modo == 'iD': caminhao.iD = int(input())
+        if modo == 'carga_maxima': caminhao.carga_maxima = float(input())
+        if modo == 'custo_km': caminhao.custo_km = float(input())
+    
+    def modificarCarga(self, carga, modo):
+        if modo == 'local_de_origem': carga.local_de_origem = input()
+        if modo == 'local_de_destino': carga.local_de_destino = input()
+        if modo == 'distancia': carga.distancia = float(input())
+        if modo == 'peso': carga.distancia = float(input())
+
+    def modificarCaminhaoId(self, caminhao):
+        print(f"iD: Valor antigo: {caminhao.iD} >> Novo Valor: ", end='')
+        self.modificarCaminhao(caminhao, 'iD')
+
+    def modificarCaminhaoCargaMaxima(self, caminhao):
+        print(f"Carga Máxima: Valor antigo: {caminhao.carga_maxima} >> Novo Valor: ", end='')
+        self.modificarCaminhao(caminhao, 'carga_maxima')
+
+    def modificarCaminhaoCustoPorKm(self, caminhao):
+        print(f"Custo por Km: Valor antigo: R$ {caminhao.custo_km} >> Novo Valor: R$ ", end='')
+        self.modificarCaminhao(caminhao, 'custo_km')
+
+    def modificarCaminhaoTudo(self, caminhao):
+        print(f"iD: Valor antigo: {caminhao.iD} >> Novo Valor: ", end='')
+        self.modificarCaminhao(caminhao, 'iD')
+        print(f"Carga Máxima: Valor antigo: {caminhao.carga_maxima} >> Novo Valor: ", end='')
+        self.modificarCaminhao(caminhao, 'carga_maxima')
+        print(f"Custo por Km: Valor antigo: R$ {caminhao.custo_km} >> Novo Valor: R$ ", end='')
+        self.modificarCaminhao(caminhao, 'custo_km')
+        
+            
+
+class Carga:
+    idCaminhao = None
+
+    def __init__(self, local_de_origem="Sem Local de Origem", local_de_destino="Sem Local de Destino", distancia=0.0, peso=0.0):
+        self.local_de_origem = local_de_origem
+        self.local_de_destino = local_de_destino
+        self.distancia = distancia
+        self.peso = peso
+
+    def listarAtributos(self):
+        print(f"id do Caminhão: {self.idCaminhao}.")
+        print(f"Local de origem: {self.local_de_origem}.")
+        print(f"Local de destino: {self.local_de_destino}.")
+        print(f"Distância: {self.distancia:.2f} metros")
+        print(f"Peso: {self.peso:.2f} Kilogramas.")
+        return ''
+
+
+
+class Caminhão:
+    iD = ''
+    carga_maxima = 0
+    custo_km = 0
+    cargas = []
+
+    def __init__(self, iD=None, carga_maxima=0.0, custo_km=0.0):
+        self.iD = iD
+        self.carga_maxima = carga_maxima
+        self.custo_km = custo_km
+
+    def listarAtributos(self):
+        print(f"ID: {self.iD}.")
+        print(f"Carga Máxima: {self.carga_maxima} Kilogramas.")
+        print(f"Custo por kilometro: R$ {self.custo_km}.")
+
+
+
+class Interface:
+
+    def __init__(self):
+        self.frota = Frota()
+        self.modificador = self.getModificador()
+
+    def start(self):
+        self.cabecalho()
+        texto_entrada = f"Seja Bem Vindo(a) {getpass.getuser()}!"
+        print("\n{:^100}\n\n{:^100}".format(
+            texto_entrada, "Acessando em: " + dataAtual()))
+        self.linhas()
+        time.sleep(2)
+        self.menuPrincipal()
+
+    def menuAjuda(self):
+        opcaoAjuda = self.opcoesPadraoAjuda()
+
+
+        if   opcaoAjuda == '0': self.menuPrincipal()
+        elif opcaoAjuda == '1': self.menuPrincipal()
+
+
+        else: self.opcaoInvalida()
+
+    def menuPrincipal(self):
+        opcaoMP = self.opcoesPadraoMP()
+        if opcaoMP == '0':
+            self.sair()
+
+
+        elif opcaoMP == '1': self.menuGerenciarFrota()
+        elif opcaoMP == '2': self.menuGerenciarCargas()
+        elif opcaoMP == '3': self.menuAjuda()
+        elif opcaoMP == '4': self.sair()
+
+
+        else:
+            self.opcaoInvalida()
+        
+    def menuGerenciarFrota(self):
+        opcaoGF = self.opcoesPadraoGF()
+        if opcaoGF == '0':
+            self.menuPrincipal()
+
+
+        elif opcaoGF == '1': self.menuNovoCaminhao()
+        elif opcaoGF == '2': self.menuModificarCaminhao()
+        elif opcaoGF == '3': self.menuAtribuirCarga()
+        elif opcaoGF == '4': self.menuListarFrota()
+        elif opcaoGF == '5': self.menuPrincipal()
+
+
+        else:
+            self.opcaoInvalida()
+
+    def menuGerenciarCargas(self):
+        opcaoGC = self.opcoesPadraoGC()
+        if opcaoGC == '0':
+            self.menuPrincipal()
+        
+
+        elif opcaoGC == '1': self.menuNovaCarga()
+        elif opcaoGC == '2': self.MenuModificarCarga()
+        elif opcaoGC == '3': self.menuDeletarCarga()
+        elif opcaoGC == '4': self.menuListarCargas()
+        elif opcaoGC == '5': self.menuPrincipal()
+
+
+        else:
+            self.opcaoInvalida()
+
+    def menuNovoCaminhao(self):
+        self.cabecalho("Nova Caminhão")
+        self.frota.novoCaminhao()
+        opcaoNovoCam = self.opcoesPadraoModNow()
+        if opcaoNovoCam == '0':
+            self.menuGerenciarFrota()
+
+
+        elif opcaoNovoCam == '1': self.menuModificarCaminhao(True)
+        elif opcaoNovoCam == '2': self.menuGerenciarFrota()
+
+
+        else:
+            self.opcaoInvalida()
+
+    def menuNovaCarga(self):
+        self.cabecalho("Nova Carga ")
+        self.frota.novaCarga()
+        opcaoNovaCar = self.opcoesPadraoModNow("Carga")
+        if opcaoNovaCar == '0':
+            self.menuGerenciarCargas()
+
+
+        elif opcaoNovaCar == '1': self.MenuModificarCarga(True)
+        elif opcaoNovaCar == '2': self.menuGerenciarCargas()
+
+
+        else:
+            self.opcaoInvalida()
+
+
+    def menuModificarCaminhao(self, modificar_ultimo=False):
+        opcaoModCam = 0
+        if modificar_ultimo:
+            caminhao = self.frota.caminhoes[-1]
+            opcaoModCam = self.opcoesPadraoModCam()
+        else:
+            while True:
+                self.menuListarFrota(modo=2)
+                self.mostrarOpcoes([" Voltar ao Menu Anterior"], 0)
+                index_caminhao = int(self.escolherCaminhao()) - 1
+                if index_caminhao > len(self.frota.caminhoes)  - 1:
+                    self.opcaoInvalida(['Opção escolhida não corresponde a nenhum Caminhão.'], ' ', False)
+                if index_caminhao <= len(self.frota.caminhoes) - 1:
+                    break
+            if index_caminhao >= 0: # Escolheu caminhão
+                opcaoModCam = self.opcoesPadraoModCam()
+            else:
+                self.menuGerenciarFrota()
+            caminhao = self.frota.caminhoes[index_caminhao]
+        if opcaoModCam == '0':
+            self.menuGerenciarFrota()
+        
+
+        elif opcaoModCam == '1': self.frota.modificarCaminhaoId(caminhao);self.informacoesAlteradas()
+        elif opcaoModCam == '2': self.frota.modificarCaminhaoCargaMaxima(caminhao);self.informacoesAlteradas()
+        elif opcaoModCam == '3': self.frota.modificarCaminhaoCustoPorKm(caminhao);self.informacoesAlteradas()
+        elif opcaoModCam == '4': self.frota.modificarCaminhaoTudo(caminhao);self.informacoesAlteradas()
+        elif opcaoModCam == '5': self.menuGerenciarFrota()
+        
+        
+        else:
+            self.opcaoInvalida()
+
+    def menuAtribuirCarga(self):
+        while True:
+            self.menuListarFrota(modo=2)
+            self.mostrarOpcoes([" Voltar ao Menu Anterior"], 0)
+            index_caminhao = int(self.escolherCaminhao()) - 1
+            print(f"index_caminhao = {index_caminhao}")
+            if index_caminhao > len(self.frota.caminhoes)  - 1:
+                self.opcaoInvalida(['Opção escolhida não corresponde a nenhum Caminhão.'], ' ', False)
+            if index_caminhao <= len(self.frota.caminhoes) - 1:
+                break
+        caminhao = self.frota.caminhoes[index_caminhao]
+        if index_caminhao >= 0:
+            while True:
+                self.menuListarCargas()
+                self.mostrarOpcoes([" Voltar ao Menu Anterior"], 0)
+                index_carga = int(self.escolherCarga()) - 1
+                if index_carga > len(self.frota.cargas)  - 1:
+                    self.opcaoInvalida(['Opção escolhida não corresponde a nenhum Caminhão.'], ' ', False)
+                if index_carga <= len(self.frota.cargas) - 1:
+                    break
+            
+    def menuListarCargas(self, modo=3):
+        if modo == 3:
+            self.cabecalho("Listagem das Cargas")
+            for i, car in enumerate(self.frota.cargas):
+                print(f"Carga{self.num(i+1)}: No Caminhão ID: {car.idCaminhao} | Local de Origem: {car.local_de_origem} | Local de Destino: {car.local_de_destino} ")
+            self.linhas()
+            
+            opcaoListarC = self.opcoesPadraoListar()
+            if   opcaoListarC == '0':
+                self.menuGerenciarCargas()
+
+
+            elif opcaoListarC == '1': self.menuGerenciarCargas()
+
+
+            else:
+                self.opcaoInvalida()
+
+    def menuListarFrota(self, modo=1):
+        if modo == 1:
+            self.cabecalho("Listagem da Frota")
+            
+            for i, cam in enumerate(self.frota.caminhoes):
+                print(f"Caminhão{self.num(i+1)}: ID: {cam.iD} | Carga Máxima: {cam.carga_maxima:.0f} | Custo por Km: R$ {cam.custo_km:.2f}")
+            self.linhas()
+
+            opcaoListarF = self.opcoesPadraoListar()
+
+            if   opcaoListarF == '0': self.menuGerenciarFrota()
+            elif opcaoListarF == '1': self.menuGerenciarFrota()
+            
+            else: self.opcaoInvalida()
+        
+        if modo == 2 or modo == 3:
+            self.cabecalho("Modificar Caminhão")
+            if modo == 3:
+                self.cabecalho("Atribuir Carga")
+
+            if not self.frota.caminhoes:
+                self.linhas()
+                time.sleep(2)
+                self.menuPrincipal()
+
+            else:
+                for i, cam in enumerate(self.frota.caminhoes):
+                    print(f"Caminhão{self.num(i+1)}: ID: {cam.iD} | Carga Máxima: {cam.carga_maxima:.0f} | Custo por Km: R$ {cam.custo_km:.2f}")
+                self.linhas()
+
+    def MenuModificarCarga(self, modificar_ultimo=False):
+        opcaoModCar = 0
+        if modificar_ultimo:
+            caminhao = self.frota.caminhoes[-1]
+            opcaoModCar = self.opcoesPadraoModCam()
+
+        else:
+            self.menuListarFrota(modo=4)
+            index_carga = int(self.escolherCaminhao()) -1
+            
+            if index_carga == -1: # Sair
+                self.menuGerenciarCargas()
+            else:
+                self.cabecalho("Modificar Carga")
+                opcaoModCar = self.opcoesPadraoModCam()
+            
+            caminhao = self.frota.cargas[index_carga]
+
+
+        if opcaoModCar == '0':
+            self.menuGerenciarCargas()
+        
+        # De 1 por 1
+        elif opcaoModCar == '1': 
+            print(f"iD: Valor antigo: {caminhao.iD} >> Novo Valor: ", end='')
+            self.frota.modificarCaminhao(caminhao, 'iD')
+            self.informacoesAlteradas()
+
+        elif opcaoModCar == '2':
+            print(f"Carga Máxima: Valor antigo: {caminhao.carga_maxima} >> Novo Valor: ", end='')
+            self.frota.modificarCaminhao(caminhao, 'carga_maxima')
+            self.informacoesAlteradas()
+
+        elif opcaoModCar == '3':
+            print(f"Custo por Km: Valor antigo: R$ {caminhao.custo_km} >> Novo Valor: R$ ", end='')
+            self.frota.modificarCar(caminhao, 'custo_km')
+            self.informacoesAlteradas()
+    
+        # Tudo 
+        elif opcaoModCar == '4': 
+            pass
+        
+        elif opcaoModCar == '5':
+            self.menuGerenciarCargas()
+        
+        else:
+            self.opcaoInvalida()
+
+    def menuDeletarCarga(self):
+        pass
+
+    def opcoesPadraoMP(self):
+        self.cabecalho("Menu Principal")
+
+        self.mostrarOpcoes([
+            "Gerenciar Frota de Caminhões",
+            "Gerenciar Cargas",
+            "Exibir Ajuda (Digite 3 e aperte o Enter)",
+            "Sair",
+            ])
+        return self.retorne()
+    
+    def opcoesPadraoGF(self):
+        self.cabecalho("Gerenciar Frota")
+
+        self.mostrarOpcoes([
+            "Adicionar novo Caminhão a Frota de Caminhões",
+            "Modificar um Caminhão já existente",
+            "Atribuir uma Carga a um Caminhão",
+            "Listar toda a Frota de Caminhões",
+            "Voltar ao Menu Anterior",
+            ])
+        return self.retorne()
+
+    def opcoesPadraoGC(self):
+        self.cabecalho("Gerenciar Cargas")
+
+        self.mostrarOpcoes([
+            "Criar uma nova Carga",
+            "Modificar uma Carga já existente",
+            "Deletar uma Carga já existente",
+            "Listar Todas as Cargas",
+            "Voltar ao Menu Anterior",
+        ])
+        return self.retorne()
+
+    def opcoesPadraoModNow(self, tipo="Caminhão"):
+        lf = "o" if tipo.lower() == "caminhão" else "a"
+        print(f"\n{tipo.capitalize()} Adicionad{lf} com Sucesso.\n")
+        print(f"\nDeseja Modificá-l{lf} agora?\n")
+        self.mostrarOpcoes([
+            "Sim",
+            "Não",
+        ])
+        return self.retorne()
+
+    def opcoesPadraoModCam(self):
+        print("\nQual informação desejas modificar?\n")
+        self.mostrarOpcoes([
+            "ID",
+            "Carga máxima",
+            "Custo por Km",
+            "Todas",
+            "Voltar ao Menu Anterior",
+            ])
+        return self.retorne()
+
+    def opcoesPadraoAtribuirCarga(self):
+        print("\nXablau\n")
+        pass
+
+    def opcoesPadraoApenasVoltar(self):
+        self.mostrarOpcoes([
+            "Voltar ao Menu Anterior"
+            ])
+            
+        return self.retorne()
+
+    def opcoesPadraoListar(self):
+        return self.opcoesPadraoApenasVoltar()
+
+    def opcoesPadraoAjuda(self):
+        self.cabecalho("Ajuda")
+        for msg in msg_ajuda:
+            print("{:^100}".format(msg))
+        self.linhas()
+        return self.opcoesPadraoApenasVoltar()
+
+    def escolherItems(self, lista, nome, show=False):
+        if not show:
+            return self.retorne()
+
+        for i, valor in enumerate(lista):
+            print(f"{nome.capitalize()} {i+1}: {valor}")
+
+        return self.retorne()
+
+    def escolherCarga(self, show=False):
+        return self.escolherItems(self.frota.cargas, "carga", show=show)
+
+    def escolherCaminhao(self, show=False):
+        return self.escolherItems(self.frota.caminhoes, "caminhão", show=show)
+
+    def informacoesAlteradas(self):
+        print("\nInformações Alteradas com Sucesso!")
+        self.linhas()
+        time.sleep(2)
+        self.menuGerenciarFrota()
+
+    def linhas(self, *args):
+        if args: linhasBase(_=args[0])
+        else: linhasBase()
+
+    
+    def getModificador(self):
+        emojis = {'0':'0️⃣',
+        '1':'1️⃣','2':'2️⃣','3':'3️⃣',
+        '4':'4️⃣','5':'5️⃣','6':'6️⃣',
+        '7':'7️⃣','8':'8️⃣','9':'9️⃣',
+        }
+        sem_emojis = {"0":"[0]",
+        "1":"[1]","2":"[2]","3":"[3]",
+        "4":"[4]","5":"[5]","6":"[6]",
+        "7":"[7]","8":"[8]","9":"[9]",
+        }
+        cmd = 'powershell "gps | where {$_.MainWindowTitle } | select Description'
+        if not b'Processador de comandos do Windows' in [i.rstrip() for i in subprocess.Popen(
+            cmd, shell=True, stdout=subprocess.PIPE ).stdout]:
+            return emojis
+        else:
+            return sem_emojis
+
+    def num(self, num):
+        num = str(num); emoji_num = []
+        for i in num: emoji_num.append(self.modificador[i])
+        return ' ' + ' '.join(emoji_num) + '  -→'
+
+    def retorne(self):
+        valor = input("  Número: ")
+        print()
+        return valor
+
+    def cabecalho(self, titulo=''):
+        limpar()
+        self.linhas()
+        cabeca = f"{Empresa.nome} Management System"
+        print("{:^100}".format(cabeca))
+        self.linhas()
+        if titulo: print("{:^100}".format(f"{titulo}\n".upper()))
+
+    def mostrarOpcoes(self, opcoes, numero=None):
+        if numero == None:
+            for i, opc in enumerate(opcoes):
+                print(f"{self.num(i+1)} {opc}")
+            linhasBase()
+        elif numero == ' ':
+            print(f" {opcoes[0]}")
+        else:
+            print(f"{self.num(numero)} {opcoes[0]}")
+            linhasBase()
+
+
+    def opcaoInvalida(self, opcoes=None, nums=None, voltar_menu=True):
+        self.cabecalho("Opção Inválida")
+        if opcoes == None:
+            print("\nOpção Inválida!\n")
+        else:
+            if nums != None:
+                self.mostrarOpcoes(opcoes, nums)
+            else:
+                self.mostrarOpcoes(opcoes)
+        self.linhas()
+        time.sleep(3)
+        if voltar_menu:
+            self.menuPrincipal()
+
+    def confirmar(self):
+        self.cabecalho("Confirmação Necessária")
+        print("{:^100}".format("Você tem certeza que deseja Sair?"))
+        self.mostrarOpcoes(["Sim", "Não, Cancelar",])
+        _opt = self.retorne()
+        return _opt
+
+    def msgSair(self):
+        self.cabecalho("Saindo...")
+        print("{:^100}".format('Obrigado Por usar o Aplicativo!'))
+        print("{:^100}".format(f'A {Empresa.nome} agradece!'))
+        print("{:^100}".format('Brasil: Rumo Ao Hexa!'))
+        self.linhas()
+
+    def sair(self):
+        opcaoSair = self.confirmar()
+
+        if   opcaoSair == '0' or opcaoSair == None:
+            self.msgSair();
+
+        elif opcaoSair == '1':
+            self.msgSair();
+
+        elif opcaoSair == '2':
+            self.menuPrincipal();
+
+        else:
+            time.sleep(3)
+            print(f"sair else: {opcaoSair} tipo: {type(opcaoSair)}")
+            time.sleep(3)
+            self.opcaoInvalida()
+
+
+
+# Função que executa tudo
+
+
+def main():
+    interface = Interface()
+    interface.start()
+
+
+    
+
+
+# Apenas executara se o arquivo executado for ele mesmo
+if __name__ == "__main__":
+    main()

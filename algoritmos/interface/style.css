@@ -1,0 +1,107 @@
+*{
+    font-family: 'Kalam';
+    margin: 0;
+    padding: 0;
+} 
+
+body {
+    padding: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: bisque;
+}
+
+#titulo {
+    color: rgb(255, 255, 255);
+    /* background-color: chocolate; */
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}
+
+.container{
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    border-radius: 60px;
+    background-color: rgb(236, 67, 67);
+    height: 720px;
+    width: 720px;
+    padding: 20px;
+    
+}
+
+.input-group{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 100px;
+    border-radius: 16px;
+}
+
+.input-box{
+    height: 80px;
+    width: 60px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.692);
+}
+
+.input-type{
+    text-align:center;
+    color: black;
+    border-radius: 20px;
+    /* font-size: 48px; */
+    font-size: 36px;
+    height: 80px;
+    width: 60px;
+    background-color: rgba(255, 255, 255, 0.925);
+}
+
+.btn-group{
+    display:grid;
+    justify-content: center;
+}
+
+.btn-questao{
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 500px;
+    height: 24px;
+    padding: 20px;
+    margin: 7px;
+    border-radius: 9em;
+    background-color: rgb(255, 255, 255);
+}
+
+/* .btn-questao:hover{
+    background-color: rgb(122, 206, 245);
+} */
+
+
+.resultado{
+    color: aliceblue;
+    margin: 0;
+    padding: 0;
+    /* background-color: bisque; */
+    display:grid;
+    align-items: center;
+    justify-content: center;
+}
+
+#result{
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 44px;
+}
+
+.tb {
+    /* background-color: rgb(20, 107, 236); */
+    background-color: rgb(14, 146, 36);
+    height: 500px;
+}
