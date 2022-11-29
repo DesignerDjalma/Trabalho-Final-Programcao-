@@ -1,0 +1,190 @@
+
+# <MChip@MDChip>:
+#     selected_chip_color:[1,1,1,0.5]
+#     icon:''
+
+#     size_hint_y: 1
+#     color:0,0,0,1
+
+
+# <MainScreen>:
+#     BoxLayout:
+#         orientation: 'vertical'
+#         BoxLayout:
+#             padding: [5, 5,5, 5]
+#             size_hint_y: None
+#             height: '48dp'
+#             icon: 'youtube'
+
+#             MDLabel:
+#                 text: 'YouTube'
+#                 halign: "left"
+#                 font_size: '30sp'
+#             MDIconButton:
+#                 icon: 'cast'
+#             MDIconButton:
+#                 icon:'bell'
+#             MDIconButton:
+#                 icon:'magnify'
+#                 id:_ix
+#         MDSeparator:
+#             height: "1dp"
+        
+#         ScrollView:
+#             do_scroll_y: False
+#             size_hint_y: None
+#             height: '48dp'
+#             bar_width:0
+
+
+
+#             BoxLayout:
+#                 padding: [5, 5,5, 5]
+#                 size_hint_y: None
+#                 height: '48dp'
+#                 size_hint_x: None
+#                 width:self.minimum_width
+#                 spacing: 5
+
+#                 MDRectangleFlatIconButton:
+#                     icon: "compass"
+#                     text: "Explore"
+#                     theme_text_color: "Custom"
+#                     text_color: 1, 1, 1, 1
+#                     line_color: 1, 1, 1, 0.1
+#                     icon_color: 1, 1, 1, 1
+
+#                 Widget:
+#                     size_hint_x:None
+#                     width:5
+#                 MDSeparator:
+#                     orientation: 'vertical'
+#                     height: "10dp"
+#                 Widget:
+#                     size_hint_x: None
+#                     width: 25
+
+#                 MChip:
+#                     text:"KivyMD"
+
+#                 MChip:
+#                     text:'Python'
+
+#                 MChip:
+#                     text:"Music"
+   
+#                 MChip:
+#                     text: 'Video Song'
+
+#         ScrollView:
+#             bar_width:0
+#             BoxLayout:
+
+#                 orientation: 'vertical'
+#                 size_hint_y: None
+#                 height: self.minimum_height
+
+
+
+<MainScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            padding: [5, 5,5, 5]
+            size_hint_y: None
+            height: '48dp'
+
+            MDLabel:
+                text: '  Interface'
+                halign: "left"
+                font_size: '30sp'
+            MDIconButton:
+                icon: 'cast'
+            MDIconButton:
+                icon:'bell'
+            MDIconButton:
+                icon:'magnify'
+                id:_ix
+        MDSeparator:
+            height: "1dp"
+        
+        ScrollView:
+            orientation:'vertical'
+            do_scroll_y: False
+            size_hint_y: None
+            height: '48dp'
+            bar_width:0
+
+            BoxLayout:
+                orientation:'vertical'
+                padding: [5, 5, 5, 5]
+                size_hint_y: None
+                height: '48dp'
+                size_hint_x: None
+                width:self.minimum_width
+                spacing: 5
+
+                MDRectangleFlatIconButton:
+                    icon: "compass"
+                    text: "Explore"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    line_color: 1, 1, 1, 0.1
+                    icon_color: 1, 1, 1, 1
+                MDSeparator:
+                    orientation: 'horizontal'
+                    height: "10dp"
+                MDRectangleFlatIconButton:
+                    icon: "compass"
+                    text: "Explore"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    line_color: 1, 1, 1, 0.1
+                    icon_color: 1, 1, 1, 1
+                MDSeparator:
+                    orientation: 'horizontal'
+                    height: "10dp"
+                MDRectangleFlatIconButton:
+                    icon: "compass"
+                    text: "Explore"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    line_color: 1, 1, 1, 0.1
+                    icon_color: 1, 1, 1, 1
+                MDSeparator:
+                    orientation: 'horizontal'
+                    height: "10dp"
+                MDRectangleFlatIconButton:
+                    icon: "compass"
+                    text: "Explore"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    line_color: 1, 1, 1, 0.1
+                    icon_color: 1, 1, 1, 1
+                MDSeparator:
+                    orientation: 'horizontal'
+                    height: "10dp"
+                MDRectangleFlatIconButton:
+                    icon: "compass"
+                    text: "Explore"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    line_color: 1, 1, 1, 0.1
+                    icon_color: 1, 1, 1, 1
+
+                Widget:
+                    size_hint_x:None
+                    width:5
+
+                Widget:
+                    size_hint_x: None
+                    width: 25
+
+
+        ScrollView:
+            bar_width:0
+            BoxLayout:
+
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
