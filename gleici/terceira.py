@@ -70,11 +70,11 @@ while 1:
     print("7 -> Deletar Carga")
     print("8 -> Alterar Carga\n")
     print("9 -> Adicionar Carga no Caminhão")
-    print("10 -> Lista os custos dos Caminhões")
-    print("Sair -> Para Sair")
+    print("10-> Lista os custos dos Caminhões")
+    print("11-> Enter para Sair")
     funcao=int(input("\nEscolha: "))
     print('\n\t',end='')
-    if funcao.lower()=="sair":
+    if funcao==11:
         break
     if funcao==1:
         caminhoes.append(criarCaminhao())
