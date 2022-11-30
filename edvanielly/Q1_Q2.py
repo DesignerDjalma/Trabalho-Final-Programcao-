@@ -1,4 +1,24 @@
 
+# QUESTÃO 1
+
+while True:
+    opt = input('Traduzir uma mensagem screta? [Sim/Nao]\n')
+
+    if opt.lower().startswith('n'):
+        break
+
+    msg = input("Mensagem secreta: ")
+    print("\nTradução: ")
+
+    for n in msg.split(','):
+        if n == '0':
+            print(" ",end="",sep="")
+        else:
+            print(chr(int(n)+96),end="",sep="")
+
+    print("\n")
+
+
 # QUESTÃO 2
 
 while True:
@@ -67,4 +87,26 @@ while True:
             repetir = False
         else:
             repetir = True
+
+
+# QUESTÃO 3
+
+
+class Caminhao:
+    id: int
+    maxCarga: float
+    custoKm: float
+    carregamento: list
+
+    def __init__(self) -> None:
+        pass
+
+class Cargas:
+    origem: str
+    destino: str
+    peso: float
+    distancia: float
+
+    def __init__(self) -> None:
+        pass
 
