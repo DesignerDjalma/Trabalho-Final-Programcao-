@@ -1,2 +1,2 @@
-# Trabalho-Final-Programcao-
-Codigo pros meus clientes
+# Exercícios Pythonm
+Codigos com 3 exercícios
